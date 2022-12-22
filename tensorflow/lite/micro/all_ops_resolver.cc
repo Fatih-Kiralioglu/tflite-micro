@@ -16,12 +16,14 @@ limitations under the License.
 #include "tensorflow/lite/micro/all_ops_resolver.h"
 
 #include "tensorflow/lite/micro/kernels/micro_ops.h"
-
+#include <iostream>
 namespace tflite {
 
 AllOpsResolver::AllOpsResolver() {
   // Please keep this list of Builtin Operators in alphabetical order.
+  std::cout << "all ops loading 0..." << std::endl;
   AddAbs();
+  AddUnidirectionalSequenceLSTM();
   AddAdd();
   AddAddN();
   AddArgMax();
@@ -29,6 +31,7 @@ AllOpsResolver::AllOpsResolver() {
   AddAssignVariable();
   AddAveragePool2D();
   AddBatchToSpaceNd();
+  std::cout << "all ops loading 1..." << std::endl;
   AddBroadcastArgs();
   AddBroadcastTo();
   AddCallOnce();
@@ -38,6 +41,7 @@ AllOpsResolver::AllOpsResolver() {
   AddConcatenation();
   AddConv2D();
   AddCos();
+  std::cout << "all ops loading 2..." << std::endl;
   AddCumSum();
   AddDepthToSpace();
   AddDepthwiseConv2D();
@@ -51,6 +55,7 @@ AllOpsResolver::AllOpsResolver() {
   AddExpandDims();
   AddFill();
   AddFloor();
+  std::cout << "all ops loading 3..." << std::endl;
   AddFloorDiv();
   AddFloorMod();
   AddFullyConnected();
@@ -62,6 +67,7 @@ AllOpsResolver::AllOpsResolver() {
   AddIf();
   AddL2Normalization();
   AddL2Pool2D();
+  std::cout << "all ops loading 4..." << std::endl;
   AddLeakyRelu();
   AddLess();
   AddLessEqual();
@@ -73,6 +79,7 @@ AllOpsResolver::AllOpsResolver() {
   AddMaxPool2D();
   AddMaximum();
   AddMean();
+  std::cout << "all ops loading 5..." << std::endl;
   AddMinimum();
   AddMirrorPad();
   AddMul();
@@ -83,6 +90,7 @@ AllOpsResolver::AllOpsResolver() {
   AddPadV2();
   AddPrelu();
   AddQuantize();
+  std::cout << "all ops loading 6..." << std::endl;
   AddReadVariable();
   AddReduceMax();
   AddRelu();
@@ -95,6 +103,7 @@ AllOpsResolver::AllOpsResolver() {
   AddShape();
   AddSin();
   AddSlice();
+  std::cout << "all ops loading 7..." << std::endl;
   AddSoftmax();
   AddSpaceToBatchNd();
   AddSpaceToDepth();
@@ -107,6 +116,7 @@ AllOpsResolver::AllOpsResolver() {
   AddSub();
   AddSum();
   AddSvdf();
+  std::cout << "all ops loading 8..." << std::endl;
   AddTanh();
   AddTranspose();
   AddTransposeConv();
@@ -114,6 +124,9 @@ AllOpsResolver::AllOpsResolver() {
   AddVarHandle();
   AddWhile();
   AddZerosLike();
+
+  std::cout << "all ops loaded." << std::endl;
+
 }
 
 }  // namespace tflite

@@ -23,13 +23,13 @@ tensorflow/lite/micro/examples/$(EXAMPLE_NAME)/constants.h \
 tensorflow/lite/micro/examples/$(EXAMPLE_NAME)/main_functions.h
 
 HELLO_WORLD_GENERATOR_INPUTS := \
-tensorflow/lite/micro/examples/hello_world/hello_world.tflite
+tensorflow/lite/micro/examples/hello_world/ah_187_int8.tflite
 
 HELLO_WORLD_GENERATED_SRCS := \
-$(GENERATED_SRCS_DIR)tensorflow/lite/micro/examples/hello_world/hello_world_model_data.cc
+$(GENERATED_SRCS_DIR)tensorflow/lite/micro/examples/hello_world/ah_187_int8_model_data.cc
 
 HELLO_WORLD_GENERATED_HDRS := \
-$(GENERATED_SRCS_DIR)tensorflow/lite/micro/examples/hello_world/hello_world_model_data.h
+$(GENERATED_SRCS_DIR)tensorflow/lite/micro/examples/hello_world/ah_187_int8_model_data.h
 
 #Find any platform - specific rules for this example.
 include $(wildcard tensorflow/lite/micro/examples/$(EXAMPLE_NAME)/*/Makefile.inc)

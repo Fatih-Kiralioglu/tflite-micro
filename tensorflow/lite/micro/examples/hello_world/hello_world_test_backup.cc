@@ -28,42 +28,6 @@ limitations under the License.
 
 #include <fstream>
 #include <unistd.h>
-#include <random>
-
-template<std::size_t SIZE>
-void Write2file(const std::vector<std::array<float, SIZE> > &save, std::string path)
-{
-    std::ofstream fileWrite(path.c_str(), std::ios::binary | std::ios::trunc);
-
-    for(size_t i=0; i < save.size(); i++) 
-    {
-      fileWrite.write((char*)save[i].data(), SIZE * sizeof(float));
-    }
-
-    fileWrite.close();
-}
-
-template<std::size_t SIZE>
-void Readfile(std::vector<std::array<float, SIZE> > &save, std::string path)
-{
-    std::ifstream fileRead(path.c_str(), std::ios::binary);
-    std::vector<int> load;
-    float temp;
-
-    for(size_t i=0; i < save.size(); i++) 
-    {
-      for(size_t j=0; j < SIZE; j++)
-      {
-        fileRead.read((char*)&temp, sizeof(float));
-        save[i][j] = temp;
-      }
-
-    }
-
-    fileRead.close();
-
-}
-
 void process_mem_usage(double& vm_usage, double& resident_set)
 {
    using std::ios_base;
@@ -106,15 +70,11 @@ void process_mem_usage(double& vm_usage, double& resident_set)
 template <typename container>
 void RandomInitArray(container& array, const unsigned int LEN, const int R_MIN, const int R_MAX)
 {
-    // Seed with a real random value, if available
-    std::random_device r;
- 
-    // Choose a random mean between 1 and 6
-    std::default_random_engine e1(r());
-    std::uniform_real_distribution<float> uniform_dist(R_MIN, R_MAX);
     for (unsigned int array_ind = 0; array_ind < LEN; array_ind++)
     {
-        array[array_ind] = static_cast<float>(uniform_dist(e1));
+        array[array_ind] =
+            static_cast<float>(rand()) / static_cast<float>(RAND_MAX / (R_MAX - R_MIN));
+        array[array_ind] += R_MIN;
     }
 }
 
@@ -159,17 +119,8 @@ TF_LITE_MICRO_TEST(LoadModelAndPerformInference) {
   }
 
   // This pulls in all the operation implementations we need
-  //tflite::AllOpsResolver resolver;
-  tflite::MicroMutableOpResolver<7> resolver;
-  resolver.AddAdd();
-  resolver.AddConv2D();
-  resolver.AddFullyConnected();
-  resolver.AddLogistic();
-  resolver.AddMul();
-  resolver.AddReshape();
-  //resolver.AddSoftmax();
-  resolver.AddUnidirectionalSequenceLSTM();
-
+  tflite::AllOpsResolver resolver;
+  
 
   constexpr int kTensorArenaSize = 400000;
   uint8_t tensor_arena[kTensorArenaSize];
@@ -180,11 +131,10 @@ TF_LITE_MICRO_TEST(LoadModelAndPerformInference) {
   // Allocate memory from the tensor_arena for the model's tensors
   TF_LITE_MICRO_EXPECT_EQ(interpreter.AllocateTensors(), kTfLiteOk);
 
-  unsigned int B_SIZE = 1000;
+  unsigned int B_SIZE = 1;
   constexpr int INPUT_ARRAY_SIZE = 6 * 48;
   std::vector<std::array<float, INPUT_ARRAY_SIZE> > in_data(B_SIZE);
-  std::vector<std::array<float, 48> > out_data(B_SIZE);
-  RandomInitBufferArray(in_data, -3, +3);
+  RandomInitBufferArray(in_data, -2, +2);
   
   // Obtain a pointer to the model's input tensor
   TfLiteTensor* input = interpreter.input(0);
@@ -209,32 +159,46 @@ TF_LITE_MICRO_TEST(LoadModelAndPerformInference) {
   std::chrono::time_point<std::chrono::system_clock> now = 
     std::chrono::system_clock::now();
 
-  for(unsigned int k=0; k< B_SIZE; k++)
+  unsigned int test_count = 1000;
+  for(unsigned int k=0; k< test_count; k++)
   {
-
-    std::copy(in_data[k].begin(),in_data[k].end(), &input->data.f[0]);
+    RandomInitBufferArray(in_data, -2, +2);
+    /* for(int i=0; i<INPUT_ARRAY_SIZE; i++)
+    {
+      input->data.f[i] = in_data[0][i];
+    }*/
+    std::copy(in_data[0].begin(),in_data[0].end(), &input->data.f[0]);
 
     // Run the model and check that it succeeds
     TfLiteStatus invoke_status = interpreter.Invoke();
     TF_LITE_MICRO_EXPECT_EQ(kTfLiteOk, invoke_status);
-    TfLiteTensor* output1 = interpreter.output(0);
+    TfLiteTensor* output1_old = interpreter.output(1);
     std::cout << "\n old: ";
-    for(int i=0; i < 1; i++)
+    for(int i=0; i < 48; i++)
     {
-        out_data[k][i] = output1->data.f[i];
+        std::cout << output1_old->data.f[i] << " " << std::endl;
     }
-
     //interpreter.ResetVariableTensors();
+    input = interpreter.input(0);
+    std::copy(in_data[0].begin(),in_data[0].end(), &input->data.f[0]);
+
+    invoke_status = interpreter.Invoke();
+    TF_LITE_MICRO_EXPECT_EQ(kTfLiteOk, invoke_status);
+    TfLiteTensor* output1_new = interpreter.output(1);
+
+    std::cout << "\n new: ";
+    for(int i=0; i < 48; i++)
+    {
+        std::cout << output1_new->data.f[i] << " " << std::endl;
+    }
   }
   
-  Write2file(in_data, "input.dat");
-  Write2file(out_data, "output.dat");
   std::chrono::time_point<std::chrono::system_clock> now2 = std::chrono::system_clock::now();
    auto millis = std::chrono::duration_cast<std::chrono::microseconds>(now2 - now).count();
 
    std::cout << "duration: " << millis << std::endl;
    
-  std::cout << "test completed: " << B_SIZE << std::endl;
+  std::cout << "test completed: " << test_count << std::endl;
 
   // Obtain a pointer to the output tensor and make sure it has the
   // properties we expect. It should be the same as the input tensor.

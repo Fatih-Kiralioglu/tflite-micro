@@ -34,6 +34,7 @@ TF_LITE_MICRO_TEST(TestImageProvider) {
 
   // Make sure we can read all of the returned memory locations.
   uint32_t total = 0;
+  (void)total;
   for (int i = 0; i < kMaxImageSize; ++i) {
     total += image_data[i];
   }

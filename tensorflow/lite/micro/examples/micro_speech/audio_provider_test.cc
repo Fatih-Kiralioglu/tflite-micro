@@ -38,6 +38,7 @@ TF_LITE_MICRO_TEST(TestAudioProvider) {
 
   // Make sure we can read all of the returned memory locations.
   int total = 0;
+  (void)total;
   for (int i = 0; i < audio_samples_size; ++i) {
     total += audio_samples[i];
   }
