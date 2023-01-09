@@ -64,7 +64,7 @@ void Readfile(std::vector<std::array<float, SIZE> > &save, std::string path)
 
 }
 
-void process_mem_usage(double& vm_usage, double& resident_set)
+/*void process_mem_usage(double& vm_usage, double& resident_set)
 {
    using std::ios_base;
    using std::ifstream;
@@ -99,7 +99,7 @@ void process_mem_usage(double& vm_usage, double& resident_set)
    long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // in case x86-64 is configured to use 2MB pages
    vm_usage     = (double)vsize / 1024.0;
    resident_set = rss * page_size_kb;
-}
+}*/
 
 
 
@@ -252,9 +252,9 @@ TF_LITE_MICRO_TEST(LoadModelAndPerformInference) {
   TF_LITE_MICRO_EXPECT_EQ(48, output1->dims->data[2]);
   TF_LITE_MICRO_EXPECT_EQ(kTfLiteFloat32, output1->type);
 
-   double vm, rss;
+   /*double vm, rss;
    process_mem_usage(vm, rss);
-   std::cout << "VM: " << vm << "; RSS: " << rss << std::endl;
+   std::cout << "VM: " << vm << "; RSS: " << rss << std::endl;*/
 
   /*
   // Get the output quantization parameters

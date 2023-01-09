@@ -105,7 +105,7 @@ download_and_extract() {
       exit 0
   fi
 
-  command -v curl >/dev/null 2>&1 || {
+  command -v /usr/bin/curl >/dev/null 2>&1 || {
     echo >&2 "The required 'curl' tool isn't installed. Try 'apt-get install curl'."; exit 1;
   }
 
@@ -117,7 +117,7 @@ download_and_extract() {
     # We have to use this approach because we normally halt the script when
     # there's an error, and instead we want to catch errors so we can retry.
     set +ex
-    curl -LsS --fail --retry 5 "${url}" > ${tempfile}
+    /usr/bin/curl -LsS --fail --retry 5 "${url}" > ${tempfile}
     CURL_RESULT=$?
     set -ex
 
@@ -149,10 +149,10 @@ download_and_extract() {
   elif [[ "${url}" == *tar.xz ]]; then
     tar -C "${dir}" --strip-components=1 -xf ${tempfile}
   elif [[ "${url}" == *bz2 ]]; then
-    curl -Ls "${url}" > ${tempdir}/tarred.bz2
+    /usr/bin/curl -Ls "${url}" > ${tempdir}/tarred.bz2
     tar -C "${dir}" --strip-components=1 -xjf ${tempfile}
   elif [[ "${url}" == *zip ]]; then
-    unzip ${tempfile} -d ${tempdir2} 2>&1 1>/dev/null
+    /usr/bin/unzip ${tempfile} -d ${tempdir2} 2>&1 1>/dev/null
     # If the zip file contains nested directories, extract the files from the
     # inner directory.
     if [ $(find $tempdir2/* -maxdepth 0 | wc -l) = 1 ] && [ -d $tempdir2/* ]; then

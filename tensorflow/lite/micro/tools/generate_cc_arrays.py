@@ -23,7 +23,7 @@ import os
 import struct
 import wave
 
-from PIL import Image
+#from PIL import Image
 
 
 def generate_file(out_fname, array_name, array_type, array_contents, size):
@@ -65,8 +65,8 @@ def generate_array(input_fname):
         size += 1
       return [size, out_string]
   elif input_fname.endswith('.bmp'):
-    img = Image.open(input_fname, mode='r')
-    image_bytes = img.tobytes()
+    with open(input_fname, 'rb') as file_t:
+        image_bytes = bytearray(file_t.read())
     out_string = ''
     for byte in image_bytes:
       out_string += hex(byte) + ','

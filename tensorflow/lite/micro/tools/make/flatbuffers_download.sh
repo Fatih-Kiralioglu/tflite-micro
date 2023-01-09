@@ -66,14 +66,14 @@ else
   wget ${FLATBUFFERS_URL} -O "$TEMPFILE" >&2
   check_md5 "${TEMPFILE}" ${FLATBUFFERS_MD5}
 
-  unzip -qo "$TEMPFILE" -d "${TEMPDIR}" >&2
+  /usr/bin/unzip -qo "$TEMPFILE" -d "${TEMPDIR}" >&2
   mv "${TEMPDIR}/flatbuffers-${ZIP_PREFIX}" ${DOWNLOADED_FLATBUFFERS_PATH}
   rm -rf "${TEMPDIR}"
 
   pushd ${DOWNLOADED_FLATBUFFERS_PATH} > /dev/null
   delete_build_files ${DOWNLOADED_FLATBUFFERS_PATH}
   create_git_repo ./
-  apply_patch_to_folder ./ ../../flatbuffers.patch "TFLM patch"
+  #apply_patch_to_folder ./ ../../flatbuffers.patch "TFLM patch"
 
   popd > /dev/null
 fi

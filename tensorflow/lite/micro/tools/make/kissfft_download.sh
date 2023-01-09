@@ -57,13 +57,13 @@ else
   wget ${KISSFFT_URL} -O "${TEMPFILE}" >&2
   check_md5 "${TEMPFILE}" ${KISSFFT_MD5}
 
-  unzip -qo "$TEMPFILE" -d "${TEMPDIR}" >&2
+  /usr/bin/unzip -qo "$TEMPFILE" -d "${TEMPDIR}" >&2
   mv "${TEMPDIR}/kissfft-130" ${DOWNLOADED_KISSFFT_PATH}
   rm -rf "${TEMPDIR}"
 
   pushd ${DOWNLOADED_KISSFFT_PATH} > /dev/null
   create_git_repo ./
-  apply_patch_to_folder ./ ../../kissfft.patch "TFLM patch"
+  #apply_patch_to_folder ./ ../../kissfft.patch "TFLM patch"
   popd > /dev/null
 fi
 
