@@ -32,7 +32,7 @@ ifneq ($(findstring arm-, $(ARCH)),)
 
 	ifneq ($(findstring arm-none-eabi, $(ARCH)),)				# XILINX ARM CORTEX (Parallel VM)
 		#ARM_ARCH = ~/Xilinx/SDK/2016.4/gnu/aarch32/lin/gcc-arm-none-eabi/bin/arm-none-eabi
-		ARM_ARCH = arm-none_eabi	        
+		ARM_ARCH = arm-xilinx-linux-gnueabi	        
 		#ARM_ARCH = ~/Xilinx/SDK/2018.3/gnu/aarch32/lin/gcc-arm-none-eabi/bin/arm-none-eabi
 		#ARM_ARCH = ~/Xilinx/SDK/2018.3/gnu/armr5/lin/gcc-arm-none-eabi/bin/armr5-none-eabi
 		SKIP_TEST = 1
