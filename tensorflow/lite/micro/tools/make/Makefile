@@ -234,7 +234,7 @@ endif
 # This library is the main target for this makefile. It will contain a minimal
 # runtime that can be linked in to other programs.
 MICROLITE_LIB_NAME := libtensorflow-microlite.a
-
+CNPY_LIB_NAME := libcnpy.a
 # Where compiled objects are stored.
 GENDIR := $(MAKEFILE_DIR)/gen/$(TARGET)_$(TARGET_ARCH)_$(BUILD_TYPE)/
 CORE_OBJDIR := $(GENDIR)obj/core/
@@ -257,6 +257,10 @@ PRJDIR := $(GENDIR)prj/
 # to bypass this check and allow for deeper directory structures.
 MICRO_LITE_EXAMPLE_TESTS := $(shell find tensorflow/lite/micro/examples/ -maxdepth 2 -name Makefile.inc)
 # Internal examples are copied outside the TFLM repo in ../google.
+
+
+
+
 ifneq ($(wildcard ../google),)
 MICRO_LITE_EXAMPLE_TESTS += $(shell find ../google/ -name Makefile_internal.inc)
 endif
@@ -595,14 +599,14 @@ ALL_SRCS := \
 	$(MICROLITE_TEST_SRCS)
 
 MICROLITE_LIB_PATH := $(LIBDIR)$(MICROLITE_LIB_NAME)
-
+CNPY_LIB_PATH := $(LIBDIR)$(CNPY_LIB_NAME)
 CXX := $(TARGET_TOOLCHAIN_ROOT)${TARGET_TOOLCHAIN_PREFIX}${CXX_TOOL}
 CC := $(TARGET_TOOLCHAIN_ROOT)${TARGET_TOOLCHAIN_PREFIX}${CC_TOOL}
 AR := $(TARGET_TOOLCHAIN_ROOT)${TARGET_TOOLCHAIN_PREFIX}${AR_TOOL}
 
 # The default Makefile target(all) must appear before any target,
 # which is compiled if there's no command-line arguments.
-all: $(MICROLITE_LIB_PATH)
+all: $(MICROLITE_LIB_PATH) $(CNPY_LIB_PATH)
 
 # Include output directory since example cc files depend on generated headers.
 INCLUDES += -I$(GENERATED_SRCS_DIR)
@@ -612,9 +616,6 @@ include $(MICRO_LITE_EXAMPLE_TESTS)
 
 # Load the integration tests.
 include $(MICRO_LITE_INTEGRATION_TESTS)
-
-# Load generated micro mutable op resolver test.
-include ${MICRO_LITE_GEN_MUTABLE_OP_RESOLVER_TEST}
 
 # Load the benchmarks.
 include $(MICRO_LITE_BENCHMARKS)
@@ -695,11 +696,11 @@ $(MICROLITE_LIB_PATH): $(MICROLITE_LIB_OBJS) $(MICROLITE_KERNEL_OBJS) $(MICROLIT
 	$(AR) $(ARFLAGS) $(MICROLITE_LIB_PATH) $(MICROLITE_LIB_OBJS) \
 	$(MICROLITE_KERNEL_OBJS) $(MICROLITE_THIRD_PARTY_OBJS) $(MICROLITE_THIRD_PARTY_KERNEL_OBJS) $(MICROLITE_CUSTOM_OP_OBJS)
 
-$(BINDIR)%_test : $(CORE_OBJDIR)%_test.o $(MICROLITE_LIB_PATH)
+$(BINDIR)%_test : $(CORE_OBJDIR)%_test.o $(MICROLITE_LIB_PATH) $(CNPY_LIB_PATH)
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) \
 	-o $@ $< \
-	$(MICROLITE_LIB_PATH) $(LDFLAGS) $(MICROLITE_LIBS)
+	$(MICROLITE_LIB_PATH) $(CNPY_LIB_PATH) $(LDFLAGS) $(MICROLITE_LIBS)
 
 $(BINDIR)%.test_target: $(BINDIR)%_test
 	@test -f $(TEST_SCRIPT) || (echo 'Unable to find the test script. Is the software emulation available in $(TARGET)?'; exit 1)

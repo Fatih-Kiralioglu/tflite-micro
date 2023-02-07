@@ -34,6 +34,7 @@ limitations under the License.
 #include "tensorflow/lite/micro/micro_error_reporter.h"
 #include "tensorflow/lite/micro/micro_op_resolver.h"
 #include "tensorflow/lite/schema/schema_generated.h"
+#include <iostream>
 
 namespace tflite {
 TfLiteRegistration* Register_DETECTION_POSTPROCESS();
@@ -57,10 +58,13 @@ class MicroMutableOpResolver : public MicroOpResolver {
     }
     return nullptr;
   }
-
+  
   const TfLiteRegistration* FindOp(const char* op) const override {
+    std::cout << "registrations_len_: " << registrations_len_ << std::endl;
     for (unsigned int i = 0; i < registrations_len_; ++i) {
       const TfLiteRegistration& registration = registrations_[i];
+      std::cout << "testtt" << std::endl;
+      //std::cout << "ops: " << registration.custom_name << " " << op << std::endl;
       if ((registration.builtin_code == BuiltinOperator_CUSTOM) &&
           (strcmp(registration.custom_name, op) == 0)) {
         return &registration;
