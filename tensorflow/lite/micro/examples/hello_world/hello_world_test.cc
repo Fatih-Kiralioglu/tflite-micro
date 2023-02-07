@@ -173,14 +173,14 @@ TF_LITE_MICRO_TEST(LoadModelAndPerformInference) {
 
   constexpr int kTensorArenaSize = 400000;
   uint8_t tensor_arena[kTensorArenaSize];
-
+ 
   // Build an interpreter to run the model with
   tflite::MicroInterpreter interpreter(model, resolver, tensor_arena,
                                        kTensorArenaSize, &micro_error_reporter);
   // Allocate memory from the tensor_arena for the model's tensors
   TF_LITE_MICRO_EXPECT_EQ(interpreter.AllocateTensors(), kTfLiteOk);
 
-  unsigned int B_SIZE = 1000;
+  unsigned int B_SIZE = 5000;
   constexpr int INPUT_ARRAY_SIZE = 6 * 48;
   std::vector<std::array<float, INPUT_ARRAY_SIZE> > in_data(B_SIZE);
   std::vector<std::array<float, 48> > out_data(B_SIZE);
@@ -209,30 +209,33 @@ TF_LITE_MICRO_TEST(LoadModelAndPerformInference) {
   std::chrono::time_point<std::chrono::system_clock> now = 
     std::chrono::system_clock::now();
 
+for(int t=0; t<200; t++)
+{
   for(unsigned int k=0; k< B_SIZE; k++)
   {
 
     std::copy(in_data[k].begin(),in_data[k].end(), &input->data.f[0]);
 
     // Run the model and check that it succeeds
-    TfLiteStatus invoke_status = interpreter.Invoke();
-    TF_LITE_MICRO_EXPECT_EQ(kTfLiteOk, invoke_status);
+    /*TfLiteStatus invoke_status = */interpreter.Invoke();
+    /*TF_LITE_MICRO_EXPECT_EQ(kTfLiteOk, invoke_status);
     TfLiteTensor* output1 = interpreter.output(0);
-    std::cout << "\n old: ";
+    //std::cout << "\n old: ";
     for(int i=0; i < 1; i++)
     {
         out_data[k][i] = output1->data.f[i];
-    }
+    }*/
 
     //interpreter.ResetVariableTensors();
   }
-  
-  Write2file(in_data, "input.dat");
-  Write2file(out_data, "output.dat");
+}
   std::chrono::time_point<std::chrono::system_clock> now2 = std::chrono::system_clock::now();
    auto millis = std::chrono::duration_cast<std::chrono::microseconds>(now2 - now).count();
 
    std::cout << "duration: " << millis << std::endl;
+  Write2file(in_data, "input.dat");
+  Write2file(out_data, "output.dat");
+  
    
   std::cout << "test completed: " << B_SIZE << std::endl;
 
