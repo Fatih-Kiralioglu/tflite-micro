@@ -6,11 +6,11 @@
 #
 #******************************************************************************
 
-include Custom.mak
+include Custom-Kong.mak
 
 #----------------------------------------------------------
 
-ALL_ARCH = arm-none-eabi
+ALL_ARCH = arm-xilinx-linux-gnueabi
 
 #----------------------------------------------------------
 
@@ -24,12 +24,12 @@ ALL_MODULE_RELEASE = MAKE_TARGET="hello_world_test" $(ALL_MODULES)
 #----------------------------------------------------------
 
 arm-none-eabi:
-	make ARCH=arm-none-eabi TARGET_ARCH=arm-none-eabi $(ALL_MODULE_RELEASE)
+	make ARCH=arm-xilinx-linux-gnueabi TARGET_ARCH=arm-xilinx-linux-gnueabi $(ALL_MODULE_RELEASE)
 
 #----------------------------------------------------------
 
 tflm:
-	make -f tensorflow/lite/micro/tools/make/Makefile TARGET_ARCH=arm-none-eabi			$(MAKE_TARGET)
+	make -f tensorflow/lite/micro/tools/make/Makefile TARGET_ARCH=arm-xilinx-linux-gnueabi			$(MAKE_TARGET)
 
 #----------------------------------------------------------
 

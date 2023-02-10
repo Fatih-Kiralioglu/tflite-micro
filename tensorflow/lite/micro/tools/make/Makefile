@@ -47,10 +47,10 @@ TARGET := $(HOST_OS)
 TARGET_ARCH := $(HOST_ARCH)
 
 # Default compiler and tool names:
-#TOOLCHAIN:=gcc
-#CXX_TOOL := g++
-#CC_TOOL := gcc
-#AR_TOOL := ar
+TOOLCHAIN:=gcc
+CXX_TOOL := g++
+CC_TOOL := gcc
+AR_TOOL := ar
 
 ifneq ($(TAGS),)
   $(error The TAGS command line option is no longer supported in the TFLM Makefile.)
@@ -161,14 +161,12 @@ CXXFLAGS := \
   -fno-rtti \
   -fno-exceptions \
   -fno-threadsafe-statics \
-  $(COMMON_FLAGS) \
-  $(CC_OPTIONS)
+  $(COMMON_FLAGS)
 
 CCFLAGS := \
   -Wimplicit-function-declaration \
   -std=c11 \
-  $(COMMON_FLAGS) \
-  $(CC_OPTIONS)
+  $(COMMON_FLAGS)
 
 ARFLAGS := -r
 
@@ -178,9 +176,7 @@ ifeq ($(TOOLCHAIN), gcc)
     # that are unsupported with LLVM.
     LDFLAGS += \
       -Wl,--fatal-warnings \
-      -Wl,--gc-sections \
-      $(LD_OPTIONS)
-      
+      -Wl,--gc-sections
   endif
 endif
 
@@ -817,3 +813,4 @@ $(DEPDIR)/%.d: ;
 .PRECIOUS: $(BINDIR)%_test
 
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(ALL_SRCS)))
+
